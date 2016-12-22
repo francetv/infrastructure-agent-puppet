@@ -38,35 +38,37 @@ class newrelic_infra::agent (
   # Setup agent package repo
   case $::operatingsystem {
     'Debian', 'Ubuntu': {
-      package { 'apt-transport-https':
-        ensure => 'installed',
+      if !defined(Package['apt-transport-https']) {
+        package { 'apt-transport-https':
+          ensure => 'installed',
+        }
       }
-      apt::source { 'newrelic_infra-agent':
-        ensure       => $package_repo_ensure,
-        location     => "https://download.newrelic.com/infrastructure_agent/linux/apt",
-        release      => $lsbdistcodename,
-        repos        => "main",
-        architecture => "amd64",
-        key          => {
-            'id'        => "A758B3FBCD43BE8D123A3476BB29EE038ECCE87C",
-            'source'    => "https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg",
-        },
-        require      => Package['apt-transport-https'],
-        notify       => Exec['apt_update'],
-      }
+
+      #apt::source { 'newrelic_infra-agent':
+      #  ensure       => $package_repo_ensure,
+      #  location     => "https://download.newrelic.com/infrastructure_agent/linux/apt",
+      #  release      => $lsbdistcodename,
+      #  repos        => "main",
+      #  architecture => "amd64",
+      #  key          => {
+      #      'id'        => "A758B3FBCD43BE8D123A3476BB29EE038ECCE87C",
+      #      'source'    => "https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg",
+      #  },
+      #  require      => Package['apt-transport-https'],
+      #  notify       => Exec['apt_update'],
+      #}
       # work around necessary to get Puppet and Apt to get along on first run, per ticket open as of this writing
       # https://tickets.puppetlabs.com/browse/MODULES-2190?focusedCommentId=341801&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-341801
-      exec { 'newrelic_infra_apt_get_update':
-        command     => 'apt-get update',
-        cwd         => '/tmp',
-        path        => ['/usr/bin'],
-        require     => Apt::Source['newrelic_infra-agent'],
-        subscribe   => Apt::Source['newrelic_infra-agent'],
-        refreshonly => true,
-      }
+      #exec { 'newrelic_infra_apt_get_update':
+      #  command     => 'apt-get update',
+      #  cwd         => '/tmp',
+      #  path        => ['/usr/bin'],
+      #  require     => Apt::Source['newrelic_infra-agent'],
+      #  subscribe   => Apt::Source['newrelic_infra-agent'],
+      #  refreshonly => true,
+      #}
       package { 'newrelic-infra':
-        ensure  => $ensure,
-        require => Exec['newrelic_infra_apt_get_update'],
+        ensure  => $ensure
       }
     }
     'RedHat', 'CentOS','Amazon': {
