@@ -74,7 +74,7 @@ class newrelic_infra::agent (
   $service_ensure      = 'running',
   $license_key         = '',
   $package_repo_ensure = 'present',
-  $newrelic_infra      = true,
+  $manage_repos        = true,
   $proxy               = '',
   $display_name        = '',
   $verbose             = '',
