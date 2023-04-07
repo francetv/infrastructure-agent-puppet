@@ -104,7 +104,6 @@ class newrelic_infra::agent (
             'Debian', 'Ubuntu': {
               package { 'newrelic-infra':
                 ensure  => $ensure,
-                require => Exec['newrelic_infra_apt_get_update'],
               }
             }
             'RedHat', 'CentOS', 'Amazon', 'OracleLinux': {
