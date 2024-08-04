@@ -211,7 +211,7 @@ class newrelic_infra::agent (
     }
   }
 
-  if $::operatingsystem != 'windows' {
+  if $facts['os']['name'] != 'windows' {
     # Setup agent config
     file { '/etc/newrelic-infra.yml':
       ensure  => 'present',
@@ -233,13 +233,13 @@ class newrelic_infra::agent (
   }
 
   # we use Upstart on CentOS 6 systems and derivatives, which is not the default
-  if (($::operatingsystem == 'CentOS' or $::operatingsystem == 'RedHat')and $::operatingsystemmajrelease == '6')
-    or ($::operatingsystem == 'Amazon') {
+  if (($facts['os']['name'] == 'CentOS' or $facts['os']['name'] == 'RedHat')and $facts['os']['release']['major'] == '6')
+    or ($facts['os']['name'] == 'Amazon') {
     service { 'newrelic-infra':
       ensure   => $service_ensure,
       provider => 'upstart',
     }
-  } elsif $::operatingsystem == 'SLES' {
+  } elsif $facts['os']['name'] == 'SLES' {
     # Setup agent service for sysv-init service manager
     service { 'newrelic-infra':
       ensure => $service_ensure,
